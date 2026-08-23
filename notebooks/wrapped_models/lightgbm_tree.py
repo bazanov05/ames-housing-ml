@@ -31,7 +31,7 @@ class LightGBMRegressionTree:
         self.gamma = gamma  
 
     def fit(self, X: pd.DataFrame, gradients: np.ndarray) -> None:
-        self._build_tree(X, gradients, list(X.columns), set())
+        self._build_tree(X, gradients, list(X.columns))
     
     def predict(self, X: pd.DataFrame) -> list[float]:
         predictions = []
