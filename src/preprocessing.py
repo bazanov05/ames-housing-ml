@@ -73,6 +73,7 @@ class AmesPreprocessor(BaseEstimator, TransformerMixin):
             "Fireplace Qu",
             "Garage Cars",
             "TotRms AbvGrd",
+            "BsmtFin SF 1",
         ]
         X = X.drop(columns=drop_cols)
 
@@ -97,8 +98,6 @@ class AmesPreprocessor(BaseEstimator, TransformerMixin):
         # numerical Imputation (fillna 0)
         num_zero_cols = [
             "Garage Area",
-            "Garage Yr Blt",
-            "BsmtFin SF 1",
             "BsmtFin SF 2",
             "Bsmt Unf SF",
             "Bsmt Full Bath",
