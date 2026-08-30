@@ -1,8 +1,10 @@
 import numpy as np
 from sklearn.pipeline import Pipeline
 from sklearn.preprocessing import OneHotEncoder, OrdinalEncoder, TargetEncoder, StandardScaler
-from sklearn.compose import ColumnTransformer
-from sklearn.compose import make_column_selector
+from sklearn.compose import ColumnTransformer, make_column_selector
+from sklearn.feature_selection import SelectFromModel
+from sklearn.linear_model import LassoCV
+
 from src.preprocessing import AmesPreprocessor
 
 
@@ -11,7 +13,8 @@ def build_pipeline(model) -> Pipeline:
     Construct a full end-to-end scikit-learn Pipeline for the Ames Housing dataset.
 
     Combines custom cleaning and feature engineering (AmesPreprocessor), 
-    feature encoding and scaling (ColumnTransformer), and the specified estimator.
+    feature encoding and scaling (ColumnTransformer), automated feature 
+    selection via L1 regularization (LassoCV), and the specified estimator.
 
     Args:
         model: A scikit-learn compatible regressor estimator.
@@ -67,11 +70,12 @@ def build_pipeline(model) -> Pipeline:
     )
 
     # create a full pipeline:
-    # clean data and add features -> encode and scale -> pass to model
+    # clean data and add features -> encode and scale -> drop noisy features -> pass to model
     pipeline = Pipeline(
         steps=[
             ("preprocessing", AmesPreprocessor()),
             ("transformer", column_transformer),
+            ("feature_selection", SelectFromModel(LassoCV(cv=5, max_iter=10000))),
             ("regressor", model)
         ]
     )
