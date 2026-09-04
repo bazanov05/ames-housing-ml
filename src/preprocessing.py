@@ -128,6 +128,6 @@ class AmesPreprocessor(BaseEstimator, TransformerMixin):
         X["TotalSF"] = X["Gr Liv Area"] + X["Total Bsmt SF"]
 
         # Drop Redundant Raw Date Columns
-        X = X.drop(columns=["Year Built", "Garage Yr Blt"])
+        X = X.drop(columns=["Year Built", "Garage Yr Blt", "Order", "PID"])
 
         return X
