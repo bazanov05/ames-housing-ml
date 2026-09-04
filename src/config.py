@@ -62,7 +62,7 @@ def make_narrow_grid(best_params: dict) -> dict:
     """
     grid = {}
     for param, val in best_params.items():
-        if "max_depth" in param:
+        if "depth" in param:
             # depth +- 1
             grid[param] = [max(2, val - 1), val, val + 1]
         elif "n_estimators" in param or "iterations" in param:
