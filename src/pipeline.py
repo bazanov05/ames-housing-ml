@@ -102,7 +102,8 @@ def build_tree_pipeline(model: LGBMRegressor | XGBRegressor) -> Pipeline:
         transformers=[
             ("one_hot", OneHotEncoder(handle_unknown="ignore"), ONE_HOT_COLS),
             ("target", TargetEncoder(), TARGET_ENCODE_COLS),
-            ("ordinal", OrdinalEncoder(categories=ORDINAL_CATEGORIES, handle_unknown="use_encoded_value", unknown_value=-1), ORDINAL_COLS)
+            ("ordinal", OrdinalEncoder(categories=ORDINAL_CATEGORIES, handle_unknown="use_encoded_value", unknown_value=-1), ORDINAL_COLS),
+            ("drop_strings", "drop", make_column_selector(dtype_include=object))
         ],
         remainder="passthrough"     # crucial: keeps numerical cols
     )
