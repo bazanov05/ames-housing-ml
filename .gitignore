@@ -5,6 +5,9 @@ __pycache__/
 .env
 .env/
 *.csv
+*.csv
+!worst_predictions.csv
+!feature_importance.csv
 .DS_Store
 *joblib
 *.json
