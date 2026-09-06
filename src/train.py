@@ -19,7 +19,12 @@ from src.preprocessing import AmesPreprocessor
 def load_data(path: str = "data/raw/AmesHousing.csv") -> tuple[pd.DataFrame, np.ndarray]:
     try:
         df = pd.read_csv(filepath_or_buffer=path)
-        y = df["SalePrice"].to_numpy()
+
+        # remove massive outliers
+        df = df[df["Gr Liv Area"] < 4000].reset_index(drop=True)
+
+        # convert target to log1p to reduce variance almost to 0
+        y = np.log1p(df["SalePrice"].to_numpy())
         X = df.drop(columns=["SalePrice"])
 
         return X, y
@@ -141,6 +146,7 @@ if __name__ == "__main__":
     X, y = load_data()
 
     (X_train, y_train), (X_test, y_test) = split_data_into_train_test(X, y)
+    y_test = np.expm1(y_test)   # no need y_test to be in log form since it is used for eval
 
     # dict of: model_name: (class, method_to_build_pipeline)
     models: dict[str, tuple[Callable, Callable]] = get_models(X_train=X_train)
@@ -157,7 +163,10 @@ if __name__ == "__main__":
 
     # iterate through best pipelines and compare results
     for name, (pipeline, cv_score) in sorted_pipelines:
-        y_pred = pipeline.predict(X_test)
+        # since the model was trained to predict log prices we need to transform them back 
+        y_pred_log = pipeline.predict(X_test)
+        y_pred = np.expm1(y_pred_log)
+
         test_rmse = root_mean_squared_error(y_test, y_pred)
         test_mae = mean_absolute_error(y_test, y_pred)
         test_r2 = r2_score(y_test, y_pred)
